@@ -11,17 +11,35 @@ const initialState = {
 }
 
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
-  const response = await axios.get(POSTS_URL)
-  return response.data
+  try {
+    const response = await axios.get(POSTS_URL)
+    return response.data
+  } catch (error) {
+    return error.message
+  }
 })
 
 export const addNewPost = createAsyncThunk(
   'posts/addNewPost',
   async (initialPost) => {
-    const response = await axios.post(POSTS_URL, initialPost)
-    return response.data
+    try {
+      const response = await axios.post(POSTS_URL, initialPost)
+      return response.data
+    } catch (error) {
+      return error.message
+    }
   }
 )
+
+export const updatePost = createAsyncThunk('posts/updatePost', async (initialPost) => {
+    const { id } = initialPost //destructure id from initial post 
+    try {
+        const response = await axios.put(`${POSTS_URL}/${id}`, initialPost)
+        return response.data
+    } catch (error) {
+        return error.message
+    }
+})
 
 const postsSlice = createSlice({
   name: 'posts',
