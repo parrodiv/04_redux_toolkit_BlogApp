@@ -117,6 +117,18 @@ const postsSlice = createSlice({
         console.log(action.payload)
         state.posts.push(action.payload)
       })
+      .addCase(updatePost.fulfilled, (state, action) => {
+        if(!action.payload?.id) {
+            console.log('Update could not complete');
+            console.log(action.payload); //error message from axios
+            return
+        }
+        const {id} = action.payload
+        action.payload.date = new Date().toISOString()
+        const posts = state.posts.filter(post => post.id !== id) 
+        //filter out the previus post with the same id and then we can update with the newer one
+        state.posts = [...posts, action.payload]
+      })
   },
 })
 
