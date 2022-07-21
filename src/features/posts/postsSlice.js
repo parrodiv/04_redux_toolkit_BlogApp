@@ -37,7 +37,11 @@ export const updatePost = createAsyncThunk('posts/updatePost', async (initialPos
         const response = await axios.put(`${POSTS_URL}/${id}`, initialPost)
         return response.data
     } catch (error) {
-        return error.message
+      // return error.message
+      return initialPost // for redux testing
+      // we get a error: Failed to load resource: the server responded with a status of 500 () when we try to update 
+      // a post that is added that has id of 101 so it the fake API can't update a post that doen't exist
+      // we can interact with fake API but we can't create the post there
     }
 })
 
@@ -125,7 +129,7 @@ const postsSlice = createSlice({
           hooray: 0,
           heart: 0,
           rocket: 0,
-          eyes: 0,
+          coffee: 0,
         }
         console.log(action.payload)
         state.posts.push(action.payload)
