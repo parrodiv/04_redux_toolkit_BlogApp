@@ -32,10 +32,23 @@ export const addNewPost = createAsyncThunk(
 )
 
 export const updatePost = createAsyncThunk('posts/updatePost', async (initialPost) => {
-    const { id } = initialPost //destructure id from initial post 
+    const { id } = initialPost //destructure id from initial post (dispatch(updatePost({id: post.id ...etc}))) 
     try {
         const response = await axios.put(`${POSTS_URL}/${id}`, initialPost)
         return response.data
+    } catch (error) {
+        return error.message
+    }
+})
+
+export const deletePost = createAsyncThunk('posts/deletePost', async (initialPost) => {
+    const { id } = initialPost
+    try {
+        const response = await axios.delete(`${POSTS_URL}/${id}`)
+        if (response?.status === 200) return initialPost;
+        // json placeholder doesn't send back the id, so here we're returning initialPost data so we can grab the id out of it
+        // inside of our builder case as we move down here in the postsSlice
+        return `${response?.status}: ${response?.statusText}`
     } catch (error) {
         return error.message
     }
@@ -126,7 +139,7 @@ const postsSlice = createSlice({
         const {id} = action.payload
         action.payload.date = new Date().toISOString()
         const posts = state.posts.filter(post => post.id !== id) 
-        //filter out the previus post with the same id and then we can update with the newer one
+        //filter out the previous post with the same id and then we can update with the newer one
         state.posts = [...posts, action.payload]
       })
   },
